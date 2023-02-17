@@ -1,5 +1,6 @@
 package com.tanbenwang;
 
+import javax.naming.OperationNotSupportedException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -86,7 +87,7 @@ public class Calculator {
      *
      * @param node 计算节点
      */
-    public static void calculator(Node node) {
+    public static void calculator(Node node) throws OperationNotSupportedException {
         if (result != null) {
             node.setNum1(result);
         }
@@ -104,6 +105,8 @@ public class Calculator {
             case "/":
                 node.setValue(node.getNum1().divide(node.getNum2().setScale(SCALE, RoundingMode.HALF_UP)));
                 break;
+            default:
+                throw new OperationNotSupportedException("非法操作类型！");
         }
         nodeMap.put(node.getId(), new Node(node.getId(), node.getOperator(), node.getNum1(), node.getNum2(), node.getValue()));
         count++;
@@ -123,18 +126,21 @@ public class Calculator {
         BigDecimal num3 = new BigDecimal(3);
         BigDecimal num4 = new BigDecimal(4);
         node.setNum1(num1);
-        node.setOperator("+");
-        node.setNum2(num2);
-        calculator(node);
-        node.setNum2(num4);
-        node.setOperator("*");
-        calculator(node);
-        undo();
-        undo();
-        undo();
-        redo();
-        redo();
-
+        try {
+            node.setOperator("+");
+            node.setNum2(num2);
+            calculator(node);
+            node.setNum2(num4);
+            node.setOperator("*");
+            calculator(node);
+            undo();
+            undo();
+            undo();
+            redo();
+            redo();
+        } catch (Exception exception) {
+            System.out.println("捕获异常：" + exception);
+        }
 
     }
 
