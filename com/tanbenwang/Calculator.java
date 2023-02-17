@@ -38,9 +38,10 @@ public class Calculator {
     private static Integer count = 0;
 
     /**
-     * 回撤操作
+     * 撤回操作
      */
     public static void redo() {
+        //至多撤回到第一步操作
         if (count <= 0) {
             count = 1;
         }
@@ -49,6 +50,7 @@ public class Calculator {
             System.out.println("不能进行redo");
             return;
         }
+        //当前的值被撤回
         BigDecimal oldResult = result;
         result = redoNode.getValue();
         count++;
@@ -62,13 +64,15 @@ public class Calculator {
      * 回滚计算节点
      */
     public static void undo() {
-
+        //最多回到初始值0
         if (count <= 0) {
             System.out.println("不能再undo");
             return;
         }
         count--;
+        //前一个计算节点的值
         BigDecimal preResult = result;
+        //默认初始值0
         if (count == 0) {
             result = BigDecimal.ZERO;
         } else {
